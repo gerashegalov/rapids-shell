@@ -10,3 +10,7 @@ val frame = hashTests.shortsFromCsv(spark).agg(
       count("*"),
       avg("shorts"),
       avg(col("more_shorts") * lit("10")))
+
+// potential start up issue should already have happened
+// resetting the log level to WARN
+sc.setLogLevel("WARN")
