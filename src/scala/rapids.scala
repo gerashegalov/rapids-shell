@@ -1,16 +1,10 @@
+import org.apache.log4j._
 import org.apache.spark._
-import org.apache.spark.sql._
-import com.nvidia.spark.rapids._
+import org.scalatest._
 
-val hashTests = new HashAggregatesSuite
-
-val frame = hashTests.shortsFromCsv(spark).agg(
-      (max("shorts") - min("more_shorts")) * lit(5),
-      sum("shorts"),
-      count("*"),
-      avg("shorts"),
-      avg(col("more_shorts") * lit("10")))
+val hashTests = new com.nvidia.spark.rapids.HashAggregatesSuite
 
 // potential start up issue should already have happened
 // resetting the log level to WARN
 sc.setLogLevel("WARN")
+LogManager.getLogger("com.nvidia.spark.rapids.SparkSessionHolder").setLevel(Level.DEBUG)

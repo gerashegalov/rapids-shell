@@ -25,7 +25,9 @@ for module in $MODULES; do
   RAPIDS_CLASSES=$RAPIDS_CLASSES:$SPARK_RAPIDS_HOME/$module/target/test-classes
 done
 
-SCALATEST_JARS=$(find ~/.m2 -path \*/$SCALATEST_VERSION/\* -name \*scalatest\*jar -o -name \*scalactic\*jar | tr -s "\n" ":")
+SCALATEST_JARS=$(find ~/.m2 \
+	-path \*/$SCALATEST_VERSION/\* -name \*scalatest\*jar -o \
+	-path \*/$SCALATEST_VERSION/\* -name \*scalactic\*jar | tr -s "\n" ":")
 
 ALL_JARS=$(echo $SPARK_RAPIDS_HOME/dist/target/rapids*.jar)
 ALL_JARS=$ALL_JARS:$(echo $SPARK_RAPIDS_HOME/integration_tests/target/dependency/cudf*jar)
@@ -37,10 +39,10 @@ SPARK_SHELL=${SPARK_SHELL:-pyspark}
 
 ${SPARK_HOME}/bin/${SPARK_SHELL} \
 	-I $RAPIDS_SHELL_HOME/src/scala/rapids.scala \
-	--properties-file $RAPIDS_SHELL_HOME/src/conf/rapids.properties \
 	--driver-memory 10g \
 	--num-executors 1 \
-	--driver-java-options "$JDBSTR -Dlog4j.debug=true -Dlog4j.configuration=file:${RAPIDS_SHELL_HOME}/src/conf/log4j.properties" \
+	--driver-java-options "-ea -Dlog4j.debug=true -Dlog4j.configuration=file:${RAPIDS_SHELL_HOME}/src/conf/log4j.properties $JDBSTR" \
 	--driver-class-path "$RAPIDS_CLASSPATH" \
 	--conf spark.executor.extraClassPath="$RAPIDS_CLASSPATH" \
+	--conf spark.plugins=com.nvidia.spark.SQLPlugin \
 	$@
