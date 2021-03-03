@@ -1,6 +1,7 @@
 # rapids-shell
 
 A utility to start RAPIDS-enabled Spark Shell with access to unit tests resources from https://github.com/NVIDIA/spark-rapids
+Before running the examples make sure to at least execute `mvn package` in your local spark-rapids repo if you are not using binaries.
 
 ## Examples 
 
