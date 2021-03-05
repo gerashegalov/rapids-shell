@@ -1,5 +1,7 @@
+import com.nvidia.spark.rapids._
 import org.apache.log4j._
-import org.apache.spark._
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.types._
 import org.scalatest._
 
 // potential start up issue should already have happened

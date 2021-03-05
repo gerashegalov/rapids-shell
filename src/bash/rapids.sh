@@ -24,6 +24,7 @@ for module in $MODULES; do
   # RAPIDS_CLASSES=$RAPIDS_CLASSES:$SPARK_RAPIDS_HOME/$module/target/classes
   RAPIDS_CLASSES=$RAPIDS_CLASSES:$SPARK_RAPIDS_HOME/$module/target/test-classes
 done
+RAPIDS_CLASSES=$SPARK_RAPIDS_HOME/sql-plugin/target/classes
 
 SCALATEST_JARS=$(find ~/.m2 \
 	-path \*/$SCALATEST_VERSION/\* -name \*scalatest\*jar -o \
@@ -49,4 +50,6 @@ ${SPARK_HOME}/bin/${SPARK_SHELL} \
 	--conf spark.plugins=com.nvidia.spark.SQLPlugin \
 	--conf spark.sql.extensions=com.nvidia.spark.rapids.SQLExecPlugin,com.nvidia.spark.udf.Plugin \
 	--conf spark.rapids.sql.enabled=true \
+	--conf spark.rapids.sql.test.enabled=true \
+	--conf spark.rapids.sql.explain=ALL \
 	$@
