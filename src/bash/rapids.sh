@@ -10,7 +10,7 @@ SPARK_RAPIDS_HOME=${SPARK_RAPIDS_HOME:-$HOME/gits/spark-rapids}
 
 RAPIDS_SHELL_HOME=${RAPIDS_SHELL_HOME:-$HOME/gits/rapids-shell}
 
-MODULES="sql-plugin
+MODULES=${MODULES:-"sql-plugin
 	shuffle-plugin
 	shims/spark*
 	udf-compiler
@@ -18,13 +18,12 @@ MODULES="sql-plugin
 	api_validation
 	integration_tests
 	tests
-	tests-spark310+"
+	tests-spark310+"}
 
 for module in $MODULES; do
-  # RAPIDS_CLASSES=$RAPIDS_CLASSES:$SPARK_RAPIDS_HOME/$module/target/classes
+  RAPIDS_CLASSES=$RAPIDS_CLASSES:$SPARK_RAPIDS_HOME/$module/target/classes
   RAPIDS_CLASSES=$RAPIDS_CLASSES:$SPARK_RAPIDS_HOME/$module/target/test-classes
 done
-RAPIDS_CLASSES=$SPARK_RAPIDS_HOME/sql-plugin/target/classes
 
 SCALATEST_JARS=$(find ~/.m2 \
 	-path \*/$SCALATEST_VERSION/\* -name \*scalatest\*jar -o \
@@ -52,4 +51,5 @@ ${SPARK_HOME}/bin/${SPARK_SHELL} \
 	--conf spark.rapids.sql.enabled=true \
 	--conf spark.rapids.sql.test.enabled=true \
 	--conf spark.rapids.sql.explain=ALL \
+	--conf org.apache.spark.sql.execution.ProjectExec \
 	$@
