@@ -10,8 +10,3 @@ sc.setLogLevel("WARN")
 
 // review effective configuration
 LogManager.getLogger("com.nvidia.spark.rapids.SparkSessionHolder").setLevel(Level.DEBUG)
-
-val rdd = sc.parallelize(Seq(Row(Row("Gera")), Row(Row("Cindy")), Row(Row("Cecily"))))
-val schema = StructType(Seq(StructField("name", StringType, true)))
-val nestedSchema = StructType(Seq(StructField("nested", schema, true)))
-val df = spark.createDataFrame(rdd, nestedSchema)

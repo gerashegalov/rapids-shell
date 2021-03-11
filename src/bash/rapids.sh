@@ -51,5 +51,5 @@ ${SPARK_HOME}/bin/${SPARK_SHELL} \
 	--conf spark.rapids.sql.enabled=true \
 	--conf spark.rapids.sql.test.enabled=true \
 	--conf spark.rapids.sql.explain=ALL \
-	--conf org.apache.spark.sql.execution.CollectLimitExec=true \
+	--conf spark.rapids.sql.exec.CollectLimitExec=true \
 	$@
