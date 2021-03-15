@@ -5,7 +5,7 @@ SCALATEST_VERSION=3.0.5
 
 SPARK_HOME=${SPARK_HOME:-$HOME/gits/spark}
 
-# pre-requisite: `mvn package` has been run 
+# pre-requisite: `mvn package` has been run
 SPARK_RAPIDS_HOME=${SPARK_RAPIDS_HOME:-$HOME/gits/spark-rapids}
 
 RAPIDS_SHELL_HOME=${RAPIDS_SHELL_HOME:-$HOME/gits/rapids-shell}
@@ -43,7 +43,7 @@ fi
 ${SPARK_HOME}/bin/${SPARK_SHELL} \
 	${SPARK_SHELL_RC} \
 	--driver-memory 10g \
-	--driver-java-options "-ea -Dlog4j.debug=true -Dlog4j.configuration=file:${RAPIDS_SHELL_HOME}/src/conf/log4j.properties $JDBSTR" \
+	--driver-java-options "-ea -Duser.timezone=UTC -Dlog4j.debug=true -Dlog4j.configuration=file:${RAPIDS_SHELL_HOME}/src/conf/log4j.properties $JDBSTR" \
 	--driver-class-path "$RAPIDS_CLASSPATH" \
 	--conf spark.executor.extraClassPath="$RAPIDS_CLASSPATH" \
 	--conf spark.plugins=com.nvidia.spark.SQLPlugin \
