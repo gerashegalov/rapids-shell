@@ -38,12 +38,16 @@ RAPIDS_CLASSPATH=$RAPIDS_CLASSES:$ALL_JARS:$SCALATEST_JARS
 SPARK_SHELL=${SPARK_SHELL:-spark-shell}
 if [[ "$SPARK_SHELL" == "spark-shell" ]]; then
 	SPARK_SHELL_RC="-I $RAPIDS_SHELL_HOME/src/scala/rapids.scala"
+elif [[ "$SPARK_SHELL" == "jupyter" ]]; then
+	export PYSPARK_DRIVER_PYTHON="$SPARK_SHELL"
+	export SPARK_SHELL="pyspark"
+	export PYSPARK_DRIVER_PYTHON_OPTS="notebook"
 fi
 
 ${SPARK_HOME}/bin/${SPARK_SHELL} \
 	${SPARK_SHELL_RC} \
 	--driver-memory 10g \
-	--driver-java-options "-ea -Duser.timezone=UTC -Dlog4j.debug=true -Dlog4j.configuration=file:${RAPIDS_SHELL_HOME}/src/conf/log4j.properties $JDBSTR" \
+	--driver-java-options "-ea -Duser.timezone=UTC -Dlog4j.debug=true -Dlog4j.configuration=file:${RAPIDS_SHELL_HOME}/src/conf/log4j.properties $RAPIDS_JAVA_OPTS" \
 	--driver-class-path "$RAPIDS_CLASSPATH" \
 	--conf spark.executor.extraClassPath="$RAPIDS_CLASSPATH" \
 	--conf spark.plugins=com.nvidia.spark.SQLPlugin \
@@ -52,4 +56,4 @@ ${SPARK_HOME}/bin/${SPARK_SHELL} \
 	--conf spark.rapids.sql.test.enabled=true \
 	--conf spark.rapids.sql.explain=ALL \
 	--conf spark.rapids.sql.exec.CollectLimitExec=true \
-	$@
+	"$@"
