@@ -3,12 +3,12 @@ set -x
 
 SCALATEST_VERSION=3.0.5
 
-SPARK_HOME=${SPARK_HOME:-$HOME/gits/spark}
+SPARK_HOME=${SPARK_HOME:-$HOME/gits/apache/spark}
 
 # pre-requisite: `mvn package` has been run
-SPARK_RAPIDS_HOME=${SPARK_RAPIDS_HOME:-$HOME/gits/spark-rapids}
+SPARK_RAPIDS_HOME=${SPARK_RAPIDS_HOME:-$HOME/gits/NVIDIA/spark-rapids}
 
-RAPIDS_SHELL_HOME=${RAPIDS_SHELL_HOME:-$HOME/gits/rapids-shell}
+RAPIDS_SHELL_HOME=${RAPIDS_SHELL_HOME:-$HOME/gits/gerashegalov/rapids-shell}
 
 MODULES=${MODULES:-"sql-plugin
 	shuffle-plugin
@@ -29,11 +29,9 @@ SCALATEST_JARS=$(find ~/.m2 \
 	-path \*/$SCALATEST_VERSION/\* -name \*scalatest\*jar -o \
 	-path \*/$SCALATEST_VERSION/\* -name \*scalactic\*jar | tr -s "\n" ":")
 
-ALL_JARS=$(echo $SPARK_RAPIDS_HOME/dist/target/rapids*.jar)
-ALL_JARS=$ALL_JARS:$(echo $SPARK_RAPIDS_HOME/integration_tests/target/dependency/cudf*jar)
-ALL_JARS=$ALL_JARS:$(echo $SPARK_RAPIDS_HOME/tests/target/rapids*jar)
-ALL_JARS=$(echo $ALL_JARS | tr -s " " ":" )
-RAPIDS_CLASSPATH=$RAPIDS_CLASSES:$ALL_JARS:$SCALATEST_JARS
+RAPIDS_PLUGIN_JAR=$(find $SPARK_RAPIDS_HOME -name rapids-4-spark_2.12\*SNAPSHOT.jar)
+CUDF_JAR=$(find $SPARK_RAPIDS_HOME -name cudf\*jar)
+RAPIDS_CLASSPATH=$RAPIDS_CLASSES:$RAPIDS_PLUGIN_JAR:$CUDF_JAR:$SCALATEST_JARS
 
 SPARK_SHELL=${SPARK_SHELL:-spark-shell}
 if [[ "$SPARK_SHELL" == "spark-shell" ]]; then
