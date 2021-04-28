@@ -52,6 +52,7 @@ ${SPARK_HOME}/bin/${SPARK_SHELL} \
 	--conf spark.sql.extensions=com.nvidia.spark.rapids.SQLExecPlugin,com.nvidia.spark.udf.Plugin \
 	--conf spark.rapids.sql.enabled=true \
 	--conf spark.rapids.sql.test.enabled=true \
+	--conf spark.rapids.sql.test.allowedNonGpu=org.apache.spark.sql.execution.LeafExecNode \
 	--conf spark.rapids.sql.explain=ALL \
 	--conf spark.rapids.sql.exec.CollectLimitExec=true \
 	"$@"
