@@ -7,7 +7,7 @@ Before running the examples make sure to at least execute `mvn package` in your 
 
 Use Spark RAPIDS in Jupyter notebook
 ```bash
-SPARK_HOME=~/spark-3.1.1-bin-hadoop3.2 SPARK_SHELL=jupyter rapids.sh
+SPARK_HOME=~/spark-3.1.1-bin-hadoop3.2 SPARK_SHELL=jupyter[-lab] rapids.sh
 ```
 
 Other supported values for `SPARK_SHELL` are `spark-shell` (Scala REPL, default) and `pyspark` (Python REPL)
