@@ -37,8 +37,12 @@ FINAL_JAVA_OPTS=(
 
 SPARK_SHELL=${SPARK_SHELL:-spark-shell}
 
+export IT_ROOT=${IT_ROOT:-"$SPARK_RAPIDS_HOME/integration_tests"}
+
 # for all pyspark drivers
-export PYTHONPATH=$SPARK_RAPIDS_HOME/integration_tests/src/main/python
+export PYTHONPATH="$PYTHONPATH:$IT_ROOT/src/main/python"
+
+export LD_LIBRARY_PATH="$CONDA_PREFIX/lib"
 
 case "$SPARK_SHELL" in
 

@@ -4,7 +4,7 @@ import pytest
 from data_gen import *
 
 def runpytest(test_name):
-    it_root = os.environ['SPARK_RAPIDS_HOME'] + '/integration_tests'
+    it_root = os.environ['IT_ROOT']
     pytest_roots = [
         it_root,
         it_root + '/src/main/python'
