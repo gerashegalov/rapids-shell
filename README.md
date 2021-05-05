@@ -3,7 +3,7 @@
 A utility to start RAPIDS-enabled Spark Shell with access to unit tests resources from https://github.com/NVIDIA/spark-rapids
 Before running the examples make sure to at least execute `mvn package` in your local spark-rapids repo if you are not using binaries.
 
-## Environment variables 
+## Environment variables
 
 - `SPARK_RAPIDS_HOME` - the path either to the local repo or to the location used for downloading the [binaries](https://nvidia.github.io/spark-rapids/docs/download.html)
 
@@ -47,3 +47,21 @@ HashAggregatesSuite:
 ...
 ```
 
+## Using intergation test datagens
+
+In pyspark based drivers one can use data generators from spark-rapids/integration-tests or run whole pytests.
+
+```python
+import pyspark.sql.functions as F
+import pytest
+from data_gen import *
+
+key_data_gen = StructGen([
+        ('a', IntegerGen(min_val=0, max_val=4)),
+        ('b', IntegerGen(min_val=5, max_val=9)),
+    ], nullable=False)
+val_data_gen = IntegerGen()
+df = two_col_df(spark, key_data_gen, val_data_gen)
+
+...
+```
