@@ -65,3 +65,17 @@ df = two_col_df(spark, key_data_gen, val_data_gen)
 
 ...
 ```
+
+### Pytest
+
+```python
+import os
+import pytest
+it_root = os.environ['SPARK_RAPIDS_HOME'] + '/integration_tests'
+pytest_roots = [
+    it_root,
+    it_root + '/src/main/python'
+]
+
+pytest.main(['-k', 'test_struct_count_distinct', '--rootdir'] + pytest_roots)
+```
