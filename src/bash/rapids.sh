@@ -37,6 +37,9 @@ FINAL_JAVA_OPTS=(
 
 SPARK_SHELL=${SPARK_SHELL:-spark-shell}
 
+# for all pyspark drivers
+export PYTHONPATH=$SPARK_RAPIDS_HOME/integration_tests/src/main/python
+
 case "$SPARK_SHELL" in
 
 	"spark-shell")
@@ -56,6 +59,7 @@ case "$SPARK_SHELL" in
 		export PYSPARK_DRIVER_PYTHON="$SPARK_SHELL"
 		SPARK_SHELL="pyspark"
 		;;
+
 	*)
 		echo -n "Unknown spark-rapids driver!"
 		;;
