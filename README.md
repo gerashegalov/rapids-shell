@@ -57,6 +57,8 @@ Add `rapids.py` as an ipython startup file, e.g. on *NIX
 cp src/python/rapids.py ~/.ipython/profile_default/startup/
 ```
 
+### Datagen
+
 ```python
 key_data_gen = StructGen([
         ('a', IntegerGen(min_val=0, max_val=4)),
