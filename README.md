@@ -51,11 +51,13 @@ HashAggregatesSuite:
 
 In pyspark based drivers one can use data generators from spark-rapids/integration-tests or run whole pytests.
 
-```python
-import pyspark.sql.functions as F
-import pytest
-from data_gen import *
+Add `rapids.py` as an ipython startup file, e.g. on *NIX
 
+```bash
+cp src/python/rapids.py ~/.ipython/profile_default/startup/
+```
+
+```python
 key_data_gen = StructGen([
         ('a', IntegerGen(min_val=0, max_val=4)),
         ('b', IntegerGen(min_val=5, max_val=9)),
@@ -69,13 +71,5 @@ df = two_col_df(spark, key_data_gen, val_data_gen)
 ### Pytest
 
 ```python
-import os
-import pytest
-it_root = os.environ['SPARK_RAPIDS_HOME'] + '/integration_tests'
-pytest_roots = [
-    it_root,
-    it_root + '/src/main/python'
-]
-
-pytest.main(['-k', 'test_struct_count_distinct', '--rootdir'] + pytest_roots)
+runpytest('test_struct_count_distinct')
 ```
