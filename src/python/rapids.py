@@ -1,5 +1,6 @@
 import os
 import pyspark.sql.functions as F
+import pyspark.sql.types as T
 import pytest
 from data_gen import *
 

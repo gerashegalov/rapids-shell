@@ -71,15 +71,18 @@ esac
 
 ${SPARK_HOME}/bin/${SPARK_SHELL} \
 	${SPARK_SHELL_RC} \
-	--driver-memory 10g \
+	--master 'local-cluster[2,2,4096]' \
+	--driver-memory 4g \
 	--driver-java-options "${FINAL_JAVA_OPTS[*]}" \
 	--driver-class-path "$RAPIDS_CLASSPATH" \
 	--conf spark.executor.extraJavaOptions="${FINAL_JAVA_OPTS[*]}" \
 	--conf spark.executor.extraClassPath="$RAPIDS_CLASSPATH" \
 	--conf spark.plugins=com.nvidia.spark.SQLPlugin \
 	--conf spark.sql.extensions=com.nvidia.spark.rapids.SQLExecPlugin,com.nvidia.spark.udf.Plugin \
+	--conf spark.rapids.memory.gpu.debug=STDOUT \
+	--conf spark.rapids.memory.gpu.allocFraction=0.45 \
 	--conf spark.rapids.sql.enabled=true \
-	--conf spark.rapids.sql.test.enabled=true \
+	--conf spark.rapids.sql.test.enabled=false \
 	--conf spark.rapids.sql.test.allowedNonGpu=org.apache.spark.sql.execution.LeafExecNode \
 	--conf spark.rapids.sql.explain=ALL \
 	--conf spark.rapids.sql.exec.CollectLimitExec=true \
