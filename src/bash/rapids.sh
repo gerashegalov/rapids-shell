@@ -69,9 +69,18 @@ case "$SPARK_SHELL" in
 		;;
 esac
 
+NUM_LOCAL_EXECS=${NUM_LOCAL_EXECS:-0}
+if ((NUM_LOCAL_EXECS > 0)); then
+	LOCAL_MASTER="local-cluster[$NUM_LOCAL_EXECS,2,4096]"
+	GPU_FRACTION=$(<<< "scale=2; 0.96 / $NUM_LOCAL_EXECS" bc)
+else
+	LOCAL_MASTER="local[*]"
+	GPU_FRACTION=0.96
+fi
+
 ${SPARK_HOME}/bin/${SPARK_SHELL} \
 	${SPARK_SHELL_RC} \
-	--master 'local-cluster[2,2,4096]' \
+	--master "$LOCAL_MASTER" \
 	--driver-memory 4g \
 	--driver-java-options "${FINAL_JAVA_OPTS[*]}" \
 	--driver-class-path "$RAPIDS_CLASSPATH" \
@@ -80,7 +89,7 @@ ${SPARK_HOME}/bin/${SPARK_SHELL} \
 	--conf spark.plugins=com.nvidia.spark.SQLPlugin \
 	--conf spark.sql.extensions=com.nvidia.spark.rapids.SQLExecPlugin,com.nvidia.spark.udf.Plugin \
 	--conf spark.rapids.memory.gpu.debug=STDOUT \
-	--conf spark.rapids.memory.gpu.allocFraction=0.45 \
+	--conf spark.rapids.memory.gpu.allocFraction="$GPU_FRACTION" \
 	--conf spark.rapids.sql.enabled=true \
 	--conf spark.rapids.sql.test.enabled=false \
 	--conf spark.rapids.sql.test.allowedNonGpu=org.apache.spark.sql.execution.LeafExecNode \
