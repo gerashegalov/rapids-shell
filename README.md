@@ -23,7 +23,7 @@ Other supported values for `SPARK_SHELL` are `spark-shell` (Scala REPL, default)
 
 Run in pseudo-distirbuted `local-cluster` mode
 ```bash
-SPARK_HOME=~/spark-3.1.1-bin-hadoop3.2 rapids.sh --master local-cluster[1,10,10000]
+NUM_LOCAL_EXECS=2 SPARK_HOME=~/spark-3.1.1-bin-hadoop3.2 rapids.sh
 ```
 
 Allow attaching a java debugger to the driver JVM
