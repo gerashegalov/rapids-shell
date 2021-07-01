@@ -25,7 +25,7 @@ SCALATEST_JARS=$(find ~/.m2 \
 
 RAPIDS_PLUGIN_JAR=$(find $SPARK_RAPIDS_HOME -regex ".*/rapids-4-spark_2.12-[0-9]+\.[0-9]+\.[0-9]+\(-SNAPSHOT\)?.jar")
 CUDF_JAR=$(find $SPARK_RAPIDS_HOME -name cudf\*jar)
-RAPIDS_CLASSPATH="$RAPIDS_PLUGIN_JAR:$CUDF_JAR:$SCALATEST_JARS"
+RAPIDS_CLASSPATH="$RAPIDS_PLUGIN_JAR:$CUDF_JAR:$SPARK_RAPIDS_HOME/tests/target/test-classes:$SCALATEST_JARS"
 
 FINAL_JAVA_OPTS=(
 	"-ea"
@@ -88,7 +88,7 @@ ${SPARK_HOME}/bin/${SPARK_SHELL} \
 	--conf spark.executor.extraClassPath="$RAPIDS_CLASSPATH" \
 	--conf spark.plugins=com.nvidia.spark.SQLPlugin \
 	--conf spark.sql.extensions=com.nvidia.spark.rapids.SQLExecPlugin,com.nvidia.spark.udf.Plugin \
-	--conf spark.rapids.memory.gpu.debug=STDOUT \
+	--conf spark.rapids.memory.gpu.minAllocFraction=0 \
 	--conf spark.rapids.memory.gpu.allocFraction="$GPU_FRACTION" \
 	--conf spark.rapids.sql.enabled=true \
 	--conf spark.rapids.sql.test.enabled=false \
