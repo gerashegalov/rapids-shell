@@ -16,18 +16,19 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
 while [[ $# -gt 0 ]]; do
 	key="$1"
 	case $key in
-		--n|--dry-run)
+		-n|--dry-run)
 			DRY_RUN=true
 			shift
 			;;
 
-		--help)
+		-h|--help)
 			#TODO
 			shift
 			;;
 
 
 		*) #NOPE
+			break
 			;;
 	esac
 done
