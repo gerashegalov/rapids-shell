@@ -117,8 +117,8 @@ COMMAND_ARR=(
 	--conf spark.rapids.sql.test.allowedNonGpu=org.apache.spark.sql.execution.LeafExecNode
 	--conf spark.rapids.sql.explain=ALL
 	--conf spark.rapids.sql.exec.CollectLimitExec=true
-	\"$@\"
 )
+COMMAND_ARR+=("$@")
 
 if [ "$DRY_RUN" = "true" ]; then
 	echo "# Generating SparkSubmit command to start Spark RAPIDS"
