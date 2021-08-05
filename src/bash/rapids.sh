@@ -109,7 +109,6 @@ COMMAND_ARR=(
 	--conf spark.executor.extraJavaOptions=\"${FINAL_JAVA_OPTS[*]} ${RAPIDS_EXEC_OPTS}\"
 	--conf spark.executor.extraClassPath=\"${RAPIDS_CLASSPATH}\"
 	--conf spark.plugins=com.nvidia.spark.SQLPlugin
-	--conf spark.sql.extensions=com.nvidia.spark.rapids.SQLExecPlugin,com.nvidia.spark.udf.Plugin
 	--conf spark.rapids.memory.gpu.minAllocFraction=0
 	--conf spark.rapids.memory.gpu.allocFraction=\"${GPU_FRACTION}\"
 	--conf spark.rapids.sql.enabled=true
