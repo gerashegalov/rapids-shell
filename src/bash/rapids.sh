@@ -45,7 +45,17 @@ SCALATEST_JARS=$(find ~/.m2 \
 	-path \*/$SCALATEST_VERSION/\* -name \*scalactic\*jar | tr -s "\n" ":")
 
 RAPIDS_PLUGIN_JAR=$(find $SPARK_RAPIDS_HOME -regex ".*/rapids-4-spark_2.12-[0-9]+\.[0-9]+\.[0-9]+\(-SNAPSHOT\)?$SHIMVER.jar")
-CUDF_JAR=$HOME/.m2/repository/ai/rapids/cudf/21.08.0-SNAPSHOT/cudf-21.08.0-SNAPSHOT-cuda11.jar
+
+CUDF_JAR=$(find $SPARK_RAPIDS_HOME -name cudf\*jar)
+if [ "$CUDF_JAR" == "" ]; then
+	if [[ "$RAPIDS_PLUGIN_JAR" =~ .*/rapids-4-spark_2.12-([0-9]+.[0-9]+.[0-9]+(-SNAPSHOT)?).jar ]]; then
+		RAPIDS_VERSION="${BASH_REMATCH[1]}"
+	else
+		echo "error: rapids version not detetected!"
+		exit 1
+	fi
+	CUDF_JAR=$HOME/.m2/repository/ai/rapids/cudf/$RAPIDS_VERSION/cudf-$RAPIDS_VERSION-cuda11.jar
+fi
 
 RAPIDS_CLASSPATH="${RAPIDS_PLUGIN_JAR}:${CUDF_JAR}:${SPARK_RAPIDS_HOME}/tests/target/test-classes:${SCALATEST_JARS}"
 RAPIDS_JARS="file://${RAPIDS_PLUGIN_JAR},file://${CUDF_JAR}"
