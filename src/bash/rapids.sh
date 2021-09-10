@@ -101,18 +101,20 @@ case "$SPARK_SHELL" in
 esac
 
 NUM_LOCAL_EXECS=${NUM_LOCAL_EXECS:-0}
-if ((NUM_LOCAL_EXECS > 0)); then
-	LOCAL_MASTER="local-cluster[$NUM_LOCAL_EXECS,2,4096]"
-	GPU_FRACTION=$(<<< "scale=2; 0.96 / $NUM_LOCAL_EXECS" bc)
-else
-	LOCAL_MASTER="local[*]"
-	GPU_FRACTION=0.96
+if [ "$SPARK_MASTER" = "" ]; then
+	if ((NUM_LOCAL_EXECS > 0)); then
+		SPARK_MASTER="local-cluster[$NUM_LOCAL_EXECS,2,4096]"
+		GPU_FRACTION=$(<<< "scale=2; 0.96 / $NUM_LOCAL_EXECS" bc)
+	else
+		SPARK_MASTER="local[*]"
+	fi
 fi
+GPU_FRACTION=${GPU_FRACTION:-"0.96"}
 
 COMMAND_ARR=(
 	${SPARK_HOME}/bin/${SPARK_SHELL}
 	${SPARK_SHELL_RC}
-	--master \"$LOCAL_MASTER\"
+	--master \"$SPARK_MASTER\"
 	--driver-memory 4g
 	--driver-java-options \"${FINAL_JAVA_OPTS[*]} ${RAPIDS_DRIVER_OPTS}\"
 	--driver-class-path "${RAPIDS_CLASSPATH}"
