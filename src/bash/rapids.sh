@@ -66,7 +66,7 @@ FINAL_JAVA_OPTS=(
 	"-Dlog4j.configuration=file:${RAPIDS_SHELL_HOME}/src/conf/log4j.properties"
 )
 
-SPARK_SHELL=${SPARK_SHELL:-spark-shell}
+SPARK_CMD=${SPARK_CMD:-spark-shell}
 
 export IT_ROOT=${IT_ROOT:-"$SPARK_RAPIDS_HOME/integration_tests"}
 
@@ -75,24 +75,26 @@ export PYTHONPATH="$PYTHONPATH:$IT_ROOT/src/main/python"
 
 export LD_LIBRARY_PATH="$CONDA_PREFIX/lib"
 
-case "$SPARK_SHELL" in
+case "$SPARK_CMD" in
 
 	"spark-shell")
-		# 	SPARK_SHELL_RC="-I $RAPIDS_SHELL_HOME/src/scala/rapids.scala"
+		# 	SPARK_CMD_RC="-I $RAPIDS_SHELL_HOME/src/scala/rapids.scala"
+		;;
+	"spark-submit")
 		;;
 
 	"pyspark")
 		;;
 
 	"jupyter")
-		export PYSPARK_DRIVER_PYTHON="$SPARK_SHELL"
+		export PYSPARK_DRIVER_PYTHON="$SPARK_CMD"
 		export PYSPARK_DRIVER_PYTHON_OPTS="notebook"
-		SPARK_SHELL="pyspark"
+		SPARK_CMD="pyspark"
 		;;
 
 	"jupyter-lab")
-		export PYSPARK_DRIVER_PYTHON="$SPARK_SHELL"
-		SPARK_SHELL="pyspark"
+		export PYSPARK_DRIVER_PYTHON="$SPARK_CMD"
+		SPARK_CMD="pyspark"
 		;;
 
 	*)
@@ -101,7 +103,7 @@ case "$SPARK_SHELL" in
 esac
 
 NUM_LOCAL_EXECS=${NUM_LOCAL_EXECS:-0}
-if [ "$SPARK_MASTER" = "" ]; then
+if [ "$SPARK_MASTER" == "" ]; then
 	if ((NUM_LOCAL_EXECS > 0)); then
 		SPARK_MASTER="local-cluster[$NUM_LOCAL_EXECS,2,4096]"
 		GPU_FRACTION=$(<<< "scale=2; 0.96 / $NUM_LOCAL_EXECS" bc)
@@ -112,12 +114,12 @@ fi
 GPU_FRACTION=${GPU_FRACTION:-"0.96"}
 
 COMMAND_ARR=(
-	${SPARK_HOME}/bin/${SPARK_SHELL}
-	${SPARK_SHELL_RC}
+	${SPARK_HOME}/bin/${SPARK_CMD}
+	${SPARK_CMD_RC}
 	--master \"$SPARK_MASTER\"
 	--driver-memory 4g
 	--driver-java-options \"${FINAL_JAVA_OPTS[*]} ${RAPIDS_DRIVER_OPTS}\"
-	--driver-class-path "${RAPIDS_CLASSPATH}"
+	--driver-class-path \"${RAPIDS_CLASSPATH}\"
 	--conf spark.executor.extraJavaOptions=\"${FINAL_JAVA_OPTS[*]} ${RAPIDS_EXEC_OPTS}\"
 	--conf spark.executor.extraClassPath=\"${RAPIDS_CLASSPATH}\"
 	--conf spark.plugins=com.nvidia.spark.SQLPlugin
@@ -131,9 +133,15 @@ COMMAND_ARR=(
 )
 COMMAND_ARR+=("$@")
 
-if [ "$DRY_RUN" = "true" ]; then
-	echo "# Generating SparkSubmit command to start Spark RAPIDS"
+if [ "$DRY_RUN" == "true" ]; then
+	set +x
+	echo
+	echo "************************************************************"
+	echo -n "# Generating SparkSubmit command to start Spark RAPIDS: "
+	echo
 	echo "${COMMAND_ARR[*]}"
+	echo
+	echo "************************************************************"
 else
 	echo "#### Launchng generated Spark RAPIDS shell command"
 	eval "${COMMAND_ARR[*]}"

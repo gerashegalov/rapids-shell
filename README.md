@@ -9,17 +9,14 @@ Before running the examples make sure to at least execute `mvn package` in your 
 
 - `SPARK_HOME` - the path either to the local Spark repo or to the root fo binary distro
 
-- `SPARK_SHELL` - one of `spark-shell` (default), `pyspark`, `jupyter`, `jupyter-lab`
+- `SPARK_CMD` - one of `spark-shell` (default), `spark-submit`, `pyspark`, `jupyter`, `jupyter-lab`
 
 ## Examples
 
 Use Spark RAPIDS in Jupyter notebook
 ```bash
-SPARK_HOME=~/spark-3.1.1-bin-hadoop3.2 SPARK_SHELL=jupyter[-lab] rapids.sh
+SPARK_HOME=~/spark-3.1.1-bin-hadoop3.2 SPARK_CMD=jupyter[-lab] rapids.sh
 ```
-
-Other supported values for `SPARK_SHELL` are `spark-shell` (Scala REPL, default) and `pyspark` (Python REPL)
-
 
 Run in pseudo-distirbuted `local-cluster` mode
 ```bash

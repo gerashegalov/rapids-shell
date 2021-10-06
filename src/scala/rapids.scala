@@ -6,7 +6,9 @@ import org.scalatest._
 
 // potential start up issue should already have happened
 // resetting the log level to WARN
-sc.setLogLevel("WARN")
+// sc.setLogLevel("WARN")
 
-// review effective configuration
-LogManager.getLogger("com.nvidia.spark.rapids.SparkSessionHolder").setLevel(Level.DEBUG)
+// // review effective configuration
+// LogManager.getLogger("com.nvidia.spark.rapids.SparkSessionHolder").setLevel(Level.DEBUG)
+// LogManager.getLogger("com.nvidia.spark.rapids.ShimLoader").setLevel(Level.DEBUG)
+// LogManager.getLogger("com.nvidia.spark.rapids.ShimLoader$").setLevel(Level.DEBUG)
