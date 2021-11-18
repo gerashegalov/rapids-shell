@@ -3,6 +3,33 @@
 A utility to start RAPIDS-enabled Spark Shell with access to unit tests resources from https://github.com/NVIDIA/spark-rapids
 Before running the examples make sure to at least execute `mvn package` in your local spark-rapids repo if you are not using binaries.
 
+## Comand line options
+See `rapids.sh --help` for up to date information
+```shell
+Usage: rapids.sh [OPTION]
+Options:
+  --debug
+    enable bash tracing
+  -h, --help
+    prints this message
+  -m=MASTER, --master=MASTER
+    specify MASTER for spark command, default is local[-cluster], see --num-local-execs
+  -n, --dry-run
+    generates and prints the spark submit command without executing
+  -nle=N, --num-local-execs=N
+    specify the number of local executors to use, default is 2. If > 1 use pseudo-distributed
+    local-cluster, otherwise local[*]
+  -uecp, --use-extra-classpath
+    use extraClassPath instead of --jars to add RAPIDS jars to spark-submit (default)
+  -uj, --use-jars
+    use --jars instead of extraClassPath to add RAPIDS jars to spark-submit
+  --ucx-shim=spark<3xy>
+    Spark buildver to populate shim-dependent package name of RapidsShuffleManager.
+    Will be replaced by a Boolean option
+  -cmd=CMD, --spark-command=CMD
+    specify one of spark-submit (default), spark-shell, pyspark, jupyter, jupyter-lab
+```
+
 ## Environment variables
 
 - `SPARK_RAPIDS_HOME` - the path either to the local repo or to the location used for downloading the [binaries](https://nvidia.github.io/spark-rapids/docs/download.html)
