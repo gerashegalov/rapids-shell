@@ -5,7 +5,7 @@ Before running the examples make sure to at least execute `mvn package` in your 
 
 ## Comand line options
 See `rapids.sh --help` for up to date information
-```shell
+```
 Usage: rapids.sh [OPTION]
 Options:
   --debug
