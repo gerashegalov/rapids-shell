@@ -34,6 +34,10 @@ function print_usage() {
   echo "    Will be replaced by a Boolean option"
   echo "  -cmd=CMD, --spark-command=CMD"
   echo "    specify one of spark-submit (default), spark-shell, pyspark, jupyter, jupyter-lab"
+  echo "  -dopts=EOPTS, --driver-opts=EOPTS"
+  echo "    pass EOPTS as --driver-java-options"
+  echo "  -eopts=EOPTS, --executor-opts=EOPTS"
+  echo "    pass EOPTS as spark.executor.extraJavaOptions"
 }
 
 # parse command line arguments
@@ -42,12 +46,10 @@ while [[ $# -gt 0 ]]; do
     case $key in
         --debug)
             set -x
-            shift
             ;;
 
         -n|--dry-run)
             DRY_RUN=true
-            shift
             ;;
 
         -h|--help)
@@ -57,40 +59,44 @@ while [[ $# -gt 0 ]]; do
 
         -uecp|--use-extra-classpath)
             USE_JARS=false
-            shift
             ;;
 
         -nle=*|--num-local-execs=*)
             NUM_LOCAL_EXECS="${key#*=}"
-            shift
             ;;
 
         -uj|--use-jars)
             USE_JARS=true
-            shift
             ;;
 
         -cmd=*|--spark-command=*)
             SPARK_COMMAND="${key#*=}"
-            shift
             ;;
 
         -m=*|--master=*)
             SPARK_MASTER="${key#*=}"
-            shift
             ;;
 
         # TODO make this Boolean after adding util
         # in Shim to print shimId given SPARK_HOME
         --ucx-shim=*)
             UCX_SHIM="${key#*=}"
-            shift
+            ;;
+
+        -dopts=*|--driver-opts=*)
+            RAPIDS_DRIVER_OPTS="${key#*=}"
+            ;;
+
+        -eopts=*|--ececutor-opts=*)
+            RAPIDS_EXEC_OPTS="${key#*=}"
             ;;
 
         *) #NOPE
             break
             ;;
     esac
+
+    shift
 done
 
 SPARK_HOME=${SPARK_HOME:-$HOME/gits/apache/spark}
