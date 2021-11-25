@@ -28,6 +28,12 @@ Options:
     Will be replaced by a Boolean option
   -cmd=CMD, --spark-command=CMD
     specify one of spark-submit (default), spark-shell, pyspark, jupyter, jupyter-lab
+  -dopts=EOPTS, --driver-opts=EOPTS
+    pass EOPTS as --driver-java-options
+  -eopts=EOPTS, --executor-opts=EOPTS
+    pass EOPTS as spark.executor.extraJavaOptions
+  --gpu-fraction=GPU_FRACTION
+    GPU share per executor JVM unless local or local-cluster mode, see spark.rapids.memory.gpu.allocFraction
 ```
 
 ## Environment variables
