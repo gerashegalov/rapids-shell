@@ -38,6 +38,8 @@ function print_usage() {
   echo "    pass EOPTS as --driver-java-options"
   echo "  -eopts=EOPTS, --executor-opts=EOPTS"
   echo "    pass EOPTS as spark.executor.extraJavaOptions"
+  echo "  --gpu-fraction=GPU_FRACTION"
+  echo "    GPU share per executor JVM unless local or local-cluster mode, see spark.rapids.memory.gpu.allocFraction"
 }
 
 # parse command line arguments
@@ -70,7 +72,7 @@ while [[ $# -gt 0 ]]; do
             ;;
 
         -cmd=*|--spark-command=*)
-            SPARK_COMMAND="${key#*=}"
+            SPARK_CMD="${key#*=}"
             ;;
 
         -m=*|--master=*)
@@ -89,6 +91,10 @@ while [[ $# -gt 0 ]]; do
 
         -eopts=*|--ececutor-opts=*)
             RAPIDS_EXEC_OPTS="${key#*=}"
+            ;;
+
+        --gpu-fraction=*)
+            GPU_FRACTION="${key#*=}"
             ;;
 
         *) #NOPE
