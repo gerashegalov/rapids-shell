@@ -77,7 +77,7 @@ HashAggregatesSuite:
 ...
 ```
 
-## Using intergation test datagens
+## Using integration test datagens
 
 In pyspark based drivers one can use data generators from spark-rapids/integration-tests or run whole pytests.
 
