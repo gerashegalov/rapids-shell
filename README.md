@@ -36,7 +36,7 @@ Options:
 
 - `SPARK_HOME` - the path either to the local Spark repo or to the root fo binary distro
 
-- `SPARK_CMD` - one of `spark-shell` (default), `spark-submit`, `pyspark`, `jupyter`, `jupyter-lab`
+- `SPARK_CMD` - one of `spark-shell`, `spark-submit` (default), `pyspark`, `jupyter`, `jupyter-lab`
 
 ## Examples
 

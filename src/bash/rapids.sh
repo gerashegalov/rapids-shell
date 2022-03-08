@@ -18,6 +18,8 @@ function print_usage() {
   echo "    enable bash tracing"
   echo "  -h, --help"
   echo "    prints this message"
+  echo "  -l4j=LOG4J_CONF_FILE, --log4j-file=LOG4J_CONF_FILE"
+  echo "    LOG4J_CONF_FILE location of a custom log4j config for local mode"
   echo "  -m=MASTER, --master=MASTER"
   echo "    specify MASTER for spark command, default is local[-cluster], see --num-local-execs"
   echo "  -n, --dry-run"
@@ -75,6 +77,10 @@ while [[ $# -gt 0 ]]; do
             SPARK_CMD="${key#*=}"
             ;;
 
+        -l4j=*|--log4j-file=*)
+            LOG4J_CONF_FILE="${key#*=}"
+            ;;
+
         -m=*|--master=*)
             SPARK_MASTER="${key#*=}"
             ;;
@@ -116,6 +122,8 @@ SCALATEST_JARS=$(find ~/.m2 \
     -path \*/$SCALATEST_VERSION/\* -name \*scalatest\*jar -o \
     -path \*/$SCALATEST_VERSION/\* -name \*scalactic\*jar | tr -s "\n" ":")
 
+SCALLOP_JARS=$(find ~/.m2 -name scallop_2.12-3.5.1.jar)
+
 RAPIDS_PLUGIN_JAR=$(find $SPARK_RAPIDS_HOME -regex ".*/rapids-4-spark_2.12-[0-9]+\.[0-9]+\.[0-9]+\(-SNAPSHOT\)?$SHIMVER.jar")
 
 CUDF_JAR=$(find $SPARK_RAPIDS_HOME -name cudf\*jar)
@@ -129,16 +137,26 @@ if [ "$CUDF_JAR" == "" ]; then
     CUDF_JAR=$HOME/.m2/repository/ai/rapids/cudf/$RAPIDS_VERSION/cudf-$RAPIDS_VERSION-cuda11.jar
 fi
 
-RAPIDS_CLASSPATH="${RAPIDS_PLUGIN_JAR}:${CUDF_JAR}:${SPARK_RAPIDS_HOME}/tests/target/test-classes:${SCALATEST_JARS}"
-RAPIDS_JARS="file://${RAPIDS_PLUGIN_JAR},file://${CUDF_JAR}"
+rapids_jars=(
+    "${RAPIDS_PLUGIN_JAR}"
+    "${CUDF_JAR}"
+    "${SPARK_RAPIDS_HOME}/tests/target/test-classes"
+    "${SCALATEST_JARS}"
+    "${SCALLOP_JARS}"
+)
+
+RAPIDS_CLASSPATH=$(printf "%s:" "${rapids_jars[@]}")
+
+LOG4J_CONF_FILE=${LOG4J_CONF_FILE:-"${RAPIDS_SHELL_HOME}/src/conf/log4j.properties"}
+
 FINAL_JAVA_OPTS=(
     "-ea"
     "-Duser.timezone=UTC"
     "-Dlog4j.debug=true"
-    "-Dlog4j.configuration=file:${RAPIDS_SHELL_HOME}/src/conf/log4j.properties"
+    "-Dlog4j.configuration=file://$LOG4J_CONF_FILE"
 )
 
-SPARK_CMD=${SPARK_CMD:-spark-shell}
+SPARK_CMD=${SPARK_CMD:-spark-submit}
 USE_JARS=${USE_JARS:-false}
 
 export IT_ROOT=${IT_ROOT:-"$SPARK_RAPIDS_HOME/integration_tests"}
