@@ -12,6 +12,10 @@ Options:
     enable bash tracing
   -h, --help
     prints this message
+  -l4j=LOG4J_CONF_FILE, --log4j-file=LOG4J_CONF_FILE
+    LOG4J_CONF_FILE location of a custom log4j config for local mode
+  -nsys, --nsys-profile
+    run with Nsights profile
   -m=MASTER, --master=MASTER
     specify MASTER for spark command, default is local[-cluster], see --num-local-execs
   -n, --dry-run
