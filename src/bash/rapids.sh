@@ -20,6 +20,8 @@ function print_usage() {
   echo "    prints this message"
   echo "  -l4j=LOG4J_CONF_FILE, --log4j-file=LOG4J_CONF_FILE"
   echo "    LOG4J_CONF_FILE location of a custom log4j config for local mode"
+  echo "  -nsys, --nsys-profile"
+  echo "    run with Nsights profile"
   echo "  -m=MASTER, --master=MASTER"
   echo "    specify MASTER for spark command, default is local[-cluster], see --num-local-execs"
   echo "  -n, --dry-run"
@@ -85,6 +87,12 @@ while [[ $# -gt 0 ]]; do
             SPARK_MASTER="${key#*=}"
             ;;
 
+        -nsys|--nsys-profile)
+            NSYS_PROFILE=1
+            RAPIDS_DRIVER_OPTS="-Dai.rapids.cudf.nvtx.enabled=true $RAPIDS_DRIVER_OPTS"
+            RAPIDS_EXEC_OPTS="-Dai.rapids.cudf.nvtx.enabled=true $RAPIDS_EXEC_OPTS"
+            ;;
+
         # TODO make this Boolean after adding util
         # in Shim to print shimId given SPARK_HOME
         --ucx-shim=*)
@@ -92,11 +100,11 @@ while [[ $# -gt 0 ]]; do
             ;;
 
         -dopts=*|--driver-opts=*)
-            RAPIDS_DRIVER_OPTS="${key#*=}"
+            RAPIDS_DRIVER_OPTS="${key#*=} $RAPIDS_DRIVER_OPTS"
             ;;
 
         -eopts=*|--ececutor-opts=*)
-            RAPIDS_EXEC_OPTS="${key#*=}"
+            RAPIDS_EXEC_OPTS="${key#*=} $RAPIDS_EXEC_OPTS"
             ;;
 
         --gpu-fraction=*)
@@ -225,21 +233,24 @@ else
     UCX_OPTS=()
 fi
 
-COMMAND_ARR=(
+COMMAND_ARR=()
+
+if [[ "$NSYS_PROFILE" == "1" ]]; then
+    COMMAND_ARR+=(
+        nsys
+        profile
+    )
+fi
+
+COMMAND_ARR+=(
     ${SPARK_HOME}/bin/${SPARK_CMD}
     ${SPARK_CMD_RC}
     --master \"$SPARK_MASTER\"
     --driver-memory 4g
     --driver-java-options \"${FINAL_JAVA_OPTS[*]} ${RAPIDS_DRIVER_OPTS}\"
+    --properties-file ${RAPIDS_SHELL_HOME}/src/conf/spark-rapids.properties
     --conf spark.executor.extraJavaOptions=\"${FINAL_JAVA_OPTS[*]} ${RAPIDS_EXEC_OPTS}\"
-    --conf spark.plugins=com.nvidia.spark.SQLPlugin
-    --conf spark.rapids.memory.gpu.minAllocFraction=0
     --conf spark.rapids.memory.gpu.allocFraction=\"${GPU_FRACTION}\"
-    --conf spark.rapids.sql.enabled=true
-    --conf spark.rapids.sql.test.enabled=false
-    --conf spark.rapids.sql.test.allowedNonGpu=org.apache.spark.sql.execution.LeafExecNode
-    --conf spark.rapids.sql.explain=ALL
-    --conf spark.rapids.sql.exec.CollectLimitExec=true
 )
 COMMAND_ARR+=("${JAR_OPTS[@]}")
 COMMAND_ARR+=("${UCX_OPTS[@]}")
