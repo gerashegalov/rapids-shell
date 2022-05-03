@@ -119,6 +119,7 @@ while [[ $# -gt 0 ]]; do
     shift
 done
 
+scalaVersion="2.12"
 SPARK_HOME=${SPARK_HOME:-$HOME/gits/apache/spark}
 
 # pre-requisite: `mvn package` has been run
@@ -126,31 +127,33 @@ SPARK_RAPIDS_HOME=${SPARK_RAPIDS_HOME:-$HOME/gits/NVIDIA/spark-rapids}
 
 RAPIDS_SHELL_HOME=${RAPIDS_SHELL_HOME:-"$(dirname $(dirname $DIR))"}
 
-SCALATEST_JARS=$(find ~/.m2 \
+scalaTestJars=$(find ~/.m2 \
     -path \*/$SCALATEST_VERSION/\* -name \*scalatest\*jar -o \
     -path \*/$SCALATEST_VERSION/\* -name \*scalactic\*jar | tr -s "\n" ":")
 
-SCALLOP_JARS=$(find ~/.m2 -name scallop_2.12-3.5.1.jar)
-
-RAPIDS_PLUGIN_JAR=$(find $SPARK_RAPIDS_HOME -regex ".*/rapids-4-spark_2.12-[0-9]+\.[0-9]+\.[0-9]+\(-SNAPSHOT\)?$SHIMVER.jar")
-
-CUDF_JAR=$(find $SPARK_RAPIDS_HOME -name cudf\*jar)
-if [ "$CUDF_JAR" == "" ]; then
-    if [[ "$RAPIDS_PLUGIN_JAR" =~ .*/rapids-4-spark_2.12-([0-9]+.[0-9]+.[0-9]+(-SNAPSHOT)?).jar ]]; then
+scallopJars=$(find ~/.m2 -name scallop_$scalaVersion-3.5.1.jar)
+classifier="cuda11"
+rapidsJarPrefix="rapids-4-spark_$scalaVersion"
+rapidsFindRegex=".*/$rapidsJarPrefix-[0-9]+\.[0-9]+\.[0-9]+\(-SNAPSHOT\)?\(-$classifier\)?.jar"
+rapidsPluginJar=$(find $SPARK_RAPIDS_HOME -regex "$rapidsFindRegex")
+cudfJar=$(find $SPARK_RAPIDS_HOME -name cudf\*jar)
+rapidsJarVersionRegex=".*/$rapidsJarPrefix-([0-9]+.[0-9]+.[0-9]+(-SNAPSHOT)?)(-$classifier)?.jar"
+if [ "$cudfJar" == "" ]; then
+    if [[ "$rapidsPluginJar" =~ $rapidsJarVersionRegex ]]; then
         RAPIDS_VERSION="${BASH_REMATCH[1]}"
     else
         echo "error: rapids version not detetected!"
         exit 1
     fi
-    CUDF_JAR=$HOME/.m2/repository/ai/rapids/cudf/$RAPIDS_VERSION/cudf-$RAPIDS_VERSION-cuda11.jar
+    cudfJar=$HOME/.m2/repository/ai/rapids/cudf/$RAPIDS_VERSION/cudf-$RAPIDS_VERSION-cuda11.jar
 fi
 
 rapids_jars=(
-    "${RAPIDS_PLUGIN_JAR}"
-    "${CUDF_JAR}"
+    "${rapidsPluginJar}"
+    "${cudfJar}"
     "${SPARK_RAPIDS_HOME}/tests/target/test-classes"
-    "${SCALATEST_JARS}"
-    "${SCALLOP_JARS}"
+    "${scalaTestJars}"
+    "${scallopJars}"
 )
 
 RAPIDS_CLASSPATH=$(printf "%s:" "${rapids_jars[@]}")
