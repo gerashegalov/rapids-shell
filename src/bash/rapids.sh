@@ -161,7 +161,6 @@ RAPIDS_CLASSPATH=$(printf "%s:" "${rapids_jars[@]}")
 LOG4J_CONF_FILE=${LOG4J_CONF_FILE:-"${RAPIDS_SHELL_HOME}/src/conf/log4j.properties"}
 
 FINAL_JAVA_OPTS=(
-    "-ea"
     "-Duser.timezone=UTC"
     "-Dlog4j.debug=true"
     "-Dlog4j.configuration=file://$LOG4J_CONF_FILE"
