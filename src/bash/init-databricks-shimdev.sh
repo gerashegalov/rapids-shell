@@ -44,7 +44,7 @@ sudo apt -y install jq zip unzip maven rsync
 cat << EOF >> /home/ubuntu/.bashrc
 source /usr/share/bash-completion/completions/git
 if [[ -f \$HOME/.ssh/.agent-env ]]; then
-  source  \$HOME/.ssh/.agent-env
+  source  \$HOME/.ssh/.agent-env > /dev/null
 else
   ssh-agent > \$HOME/.ssh/.agent-env
 fi
