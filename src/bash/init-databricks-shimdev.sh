@@ -25,6 +25,8 @@ cd -
 
 git clone https://github.com/NVIDIA/spark-rapids.git
 cd spark-rapids
+WITH_BLOOP=1 ./jenkins/databricks/build.sh
+
 # Add custom tags to your Databricks cluster
 # git.user.name - Github handle
 # git.full.name - your full name
