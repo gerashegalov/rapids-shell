@@ -6,6 +6,8 @@ sudo -u ubuntu mkdir -p /home/ubuntu/bin
 
 cat << EOF >> /home/ubuntu/init-spark-rapids.sh
 #!/bin/bash
+set -ex
+
 cd /home/ubuntu
 
 # Install coursier and bloop CLI
@@ -21,6 +23,8 @@ cd hocon-config-printer
 ./install.sh
 cd -
 
+git clone https://github.com/NVIDIA/spark-rapids.git
+cd spark-rapids
 # Add custom tags to your Databricks cluster
 # git.user.name - Github handle
 # git.full.name - your full name
@@ -38,9 +42,6 @@ GIT_USER_FULL_NAME=\$(\$DBCONFJSON |
 GIT_USER_EMAIL=\$(\$DBCONFJSON |
   jq -r '."all-projects".spark.databricks.clusterUsageTags.clusterAllTags | fromjson | .[] | select(.key=="git.user.email") | .value'
 )
-
-git clone https://github.com/NVIDIA/spark-rapids.git
-cd spark-rapids
 git remote add "\$GIT_USER" "git@github.com:\${GIT_USER}/spark-rapids.git"
 git config --global user.name "\$GIT_USER_FULL_NAME"
 git config --global user.email "\$GIT_USER_EMAIL"
