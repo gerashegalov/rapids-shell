@@ -1,5 +1,13 @@
 # rapids-shell
 
+This repo was started as a wrapper around Spark REPLs for easier use with the Spark RAPIDS plugin. Lately I have been putting more
+effort in maintaining [standalone Jupyter notebooks][1] that can be easily started without the wrapper script, and particularly
+easy to simply open them in VSCode with the Jupyter extension.
+
+[1]: ./src/jupyter
+
+# Original Utility
+
 A utility to start RAPIDS-enabled Spark Shell with access to unit tests resources from https://github.com/NVIDIA/spark-rapids
 Before running the examples make sure to at least execute `mvn package` in your local spark-rapids repo if you are not using binaries.
 
